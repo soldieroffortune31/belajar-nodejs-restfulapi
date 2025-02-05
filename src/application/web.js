@@ -9,4 +9,8 @@ web.use(express.json())
 web.use(publicRouter)
 web.use(userRouter)
 
+web.use((req,res, next) => {
+    res.status(404).json({errors : "API not found"})
+})
+
 web.use(errorMiddleware)
