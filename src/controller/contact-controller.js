@@ -94,11 +94,46 @@ const search = async (req, res, next) => {
     }
 }
 
+const createContactWithAddresses = async (req, res, next) => {
+    try {
+        
+        const user = req.user
+        const request = req.body
+        await contactService.createWithAddress(user, request)
+
+        res.status(200).json({
+            data : "OK"
+        })
+
+    } catch (error) {
+        next(error)
+    }
+}
+
+const getContactByIdWithAddresses = async (req, res, next) => {
+    try {
+        
+        const user = req.user
+        const contactId = req.params.contactId
+        
+        const result = await contactService.getWithAddresses(user, contactId)
+
+        res.status(200).json({
+            data : result
+        })
+
+    } catch (error) {
+        next(error)
+    }
+}
+
 
 export default {
     create,
     get,
     update,
     remove,
-    search
+    search,
+    createContactWithAddresses,
+    getContactByIdWithAddresses
 }

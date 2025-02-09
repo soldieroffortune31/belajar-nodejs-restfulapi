@@ -1,7 +1,7 @@
 import { prismanClient } from "../application/database.js";
 import { logger } from "../application/logging.js";
 import { ResponseError } from "../error/response-error.js";
-import { createContactValidation, getContactValidation, searchContactValidation, updateContactValidation } from "../validation/contact-validation.js"
+import { createContactValidation, createContactWithAddressValidation, getContactValidation, searchContactValidation, updateContactValidation } from "../validation/contact-validation.js"
 import { validate } from "../validation/validation.js"
 
 const create = async (user, request) => {
@@ -177,11 +177,52 @@ const search = async (user, request) => {
 
 }
 
+const createWithAddress = async (user, request) => {
+
+    request = validate(createContactWithAddressValidation, request);
+    request.username = user.username
+
+    await prismanClient.contact.create({
+        data : {
+            ...request,
+            addresses : {
+                create : request.addresses
+            }
+        },
+        // include: { addresses: true } //agar response address ikut
+    })
+
+}
+
+
+const getWithAddresses = async (user, contactId) => {
+
+    contactId = validate(getContactValidation, contactId)
+
+    const contact = await prismanClient.contact.findFirst({
+        where : {
+            username : user.username,
+            id : contactId
+        },
+        include : {
+            addresses : true
+        }
+    })
+
+    if(!contact){
+        throw new ResponseError(404, "Contact is not found")
+    }
+
+    return contact;
+
+}
 
 export default {
     create,
     get,
     update,
     remove,
-    search
+    search,
+    createWithAddress,
+    getWithAddresses
 }

@@ -1,10 +1,19 @@
 import Joi from "joi"
+import { createAddressValidation } from "./address-validation.js"
 
 const createContactValidation = Joi.object({
     first_name : Joi.string().max(100).required(),
     last_name : Joi.string().max(100).optional(),
     email : Joi.string().max(200).optional(),
     phone : Joi.string().max(100).optional()
+})
+
+const createContactWithAddressValidation = Joi.object({
+    first_name : Joi.string().max(100).required(),
+    last_name : Joi.string().max(100).optional(),
+    email : Joi.string().max(200).optional(),
+    phone : Joi.string().max(100).optional(),
+    addresses : Joi.array().items(createAddressValidation).min(1).required(),
 })
 
 const getContactValidation = Joi.number().positive().required()
@@ -29,5 +38,6 @@ export {
     createContactValidation,
     getContactValidation,
     updateContactValidation,
-    searchContactValidation
+    searchContactValidation,
+    createContactWithAddressValidation
 }
